@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotka-Volterra Competition Model</title>
+    <link rel="stylesheet" href="lotkacompetition.css">
+    <script src="https://cdn.jsdelivr.net/npm/lotkacompetition.js"></script>
+</head>
+<body>
+    <header>
+        <h1>TheUtpalAnand</h1>
+        <h2>Lotka-Volterra Competition Model</h2>
+    </header>
+
+    <div class="container">
+        <form id="modelForm">
+            <label for="a12">Growth Rate of Species 1 (r1):</label>
+            <input type="number" id="a11" required>
+
+            <label for="a21">Growth Rate of Species 2 (r2):</label>
+            <input type="number" id="a22" required>
+
+            <label for="b12">Competition Coefficient of Species 1 on Species 2 (K1):</label>
+            <input type="number" id="b12" required>
+
+            <label for="b21">Competition Coefficient of Species 2 on Species 1 (K2):</label>
+            <input type="number" id="b21" required>
+
+            <label for="n1">Initial Population of Species 1 (N1):</label>
+            <input type="number" id="n1" required>
+
+            <label for="n2">Initial Population of Species 2 (N2):</label>
+            <input type="number" id="n2" required>
+
+            <label for="time">Total Time (in units):</label>
+            <input type="number" id="time" required>
+
+            <button type="submit">Generate Graph</button>
+        </form>
+        
+        <canvas id="populationChart"></canvas>
+        <canvas id="n1n2Chart"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
