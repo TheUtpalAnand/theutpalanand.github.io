@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotka-Volterra Competition Model</title>
-    <link rel="stylesheet" href="lotkacompetition.css">
-    <script src="https://cdn.jsdelivr.net/npm/lotkacompetition.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <header>
@@ -13,36 +12,78 @@
         <h2>Lotka-Volterra Competition Model</h2>
     </header>
 
-    <div class="container">
-        <form id="modelForm">
-            <label for="a12">Growth Rate of Species 1 (r1):</label>
-            <input type="number" id="a11" required>
-
-            <label for="a21">Growth Rate of Species 2 (r2):</label>
-            <input type="number" id="a22" required>
-
-            <label for="b12">Competition Coefficient of Species 1 on Species 2 (K1):</label>
-            <input type="number" id="b12" required>
-
-            <label for="b21">Competition Coefficient of Species 2 on Species 1 (K2):</label>
-            <input type="number" id="b21" required>
-
-            <label for="n1">Initial Population of Species 1 (N1):</label>
-            <input type="number" id="n1" required>
-
-            <label for="n2">Initial Population of Species 2 (N2):</label>
-            <input type="number" id="n2" required>
-
-            <label for="time">Total Time (in units):</label>
-            <input type="number" id="time" required>
-
-            <button type="submit">Generate Graph</button>
-        </form>
-        
-        <canvas id="populationChart"></canvas>
-        <canvas id="n1n2Chart"></canvas>
+    <div>
+        <label for="N1">Initial Population of Species 1 (N1):</label>
+        <input type="number" id="N1" value="70">
+        <label for="N2">Initial Population of Species 2 (N2):</label>
+        <input type="number" id="N2" value="175">
+        <label for="time">Total Time:</label>
+        <input type="number" id="time" value="100">
+        <button onclick="generatePlot()">Generate Graph</button>
     </div>
 
-    <script src="script.js"></script>
+    <div id="plot" style="width: 100%; height: 100%;"></div>
+
+    <script>
+        function lotkaVolterra(r1, r2, a12, a21, N1_initial, N2_initial, totalTime) {
+            const dt = 0.1; // time step
+            const steps = Math.round(totalTime / dt);
+            const N1 = [];
+            const N2 = [];
+
+            // Initial populations
+            N1[0] = N1_initial;
+            N2[0] = N2_initial;
+
+            for (let i = 1; i <= steps; i++) {
+                const dN1 = r1 * N1[i - 1] * (1 - (N1[i - 1] + a12 * N2[i - 1]) / 200);
+                const dN2 = r2 * N2[i - 1] * (1 - (N2[i - 1] + a21 * N1[i - 1]) / 300);
+
+                N1[i] = N1[i - 1] + dN1 * dt;
+                N2[i] = N2[i - 1] + dN2 * dt;
+            }
+
+            return { N1, N2 };
+        }
+
+        function generatePlot() {
+            const r1 = 1;
+            const r2 = 0.5;
+            const a12 = 0.8;
+            const a21 = 2.0;
+            const N1_initial = parseFloat(document.getElementById("N1").value);
+            const N2_initial = parseFloat(document.getElementById("N2").value);
+            const totalTime = parseFloat(document.getElementById("time").value);
+
+            const { N1, N2 } = lotkaVolterra(r1, r2, a12, a21, N1_initial, N2_initial, totalTime);
+            const timePoints = Array.from(Array(N1.length).keys());
+
+            const trace1 = {
+                x: timePoints,
+                y: N1,
+                mode: 'lines',
+                name: 'Species 1 (N1)',
+                line: { color: 'red' }
+            };
+
+            const trace2 = {
+                x: timePoints,
+                y: N2,
+                mode: 'lines',
+                name: 'Species 2 (N2)',
+                line: { color: 'blue' }
+            };
+
+            const data = [trace1, trace2];
+
+            const layout = {
+                title: 'Lotka-Volterra Competition Model',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Population' }
+            };
+
+            Plotly.newPlot('plot', data, layout);
+        }
+    </script>
 </body>
 </html>
